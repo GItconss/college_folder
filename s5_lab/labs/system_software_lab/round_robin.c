@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 int main() {
-    int n, i, j, time = 0, tq, remain;
+    int n, i, time = 0, tq, remain;
     int at[10], bt[10], rt[10];
-    int wt[10], tat[10], completed[10] = {0};
+    int ct[10], tat[10], wt[10], completed[10] = {0};
     float avg_wt = 0, avg_tat = 0;
 
     printf("Enter number of processes: ");
@@ -39,9 +39,10 @@ int main() {
                 } else {
                     printf("P%d -> ", i);
                     time += rt[i];
-                    tat[i] = time - at[i];
-                    wt[i] = tat[i] - bt[i];
                     rt[i] = 0;
+                    ct[i] = time;
+                    tat[i] = ct[i] - at[i];
+                    wt[i] = tat[i] - bt[i];
                     completed[i] = 1;
                     remain--;
                 }
@@ -50,9 +51,9 @@ int main() {
         if(done) time++;
     }
 
-    printf("\n\nProcess\tAT\tBT\tWT\tTAT\n");
+    printf("\n\nProcess\tAT\tBT\tCT\tTAT\tWT\n");
     for(i = 0; i < n; i++) {
-        printf("P%d\t%d\t%d\t%d\t%d\n", i, at[i], bt[i], wt[i], tat[i]);
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n", i, at[i], bt[i], ct[i], tat[i], wt[i]);
         avg_wt += wt[i];
         avg_tat += tat[i];
     }
@@ -62,4 +63,3 @@ int main() {
 
     return 0;
 }
-
