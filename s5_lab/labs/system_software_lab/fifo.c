@@ -5,16 +5,16 @@ int main() {
     int i, j, k, pageFaults = 0, pageHits = 0, index = 0;
     int n, flag;
 
-    printf("Enter the number of pages: ");
+    printf("Enter number of frames: ");
+    scanf("%d", &frames);
+
+    printf("Enter length of reference string: ");
     scanf("%d", &n);
 
-    printf("Enter the page reference string:\n");
+    printf("Enter reference string:\n");
     for (i = 0; i < n; i++) {
         scanf("%d", &pages[i]);
     }
-
-    printf("Enter the number of frames: ");
-    scanf("%d", &frames);
 
     // Initialize all frames to -1 (empty)
     for (i = 0; i < frames; i++) {
@@ -25,7 +25,7 @@ int main() {
     for (i = 0; i < n; i++) {
         flag = 0;
 
-        // Check if page is already in a frame (page hit)
+        // Check if page is already in a frame (Page Hit)
         for (j = 0; j < frames; j++) {
             if (temp[j] == pages[i]) {
                 flag = 1;
