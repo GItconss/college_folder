@@ -1,71 +1,65 @@
 #include <stdio.h>
 
-int main()
-{
-    int n, time_quantum;
+int main() {
+    int n, i, time = 0, tq, remain;
+    int at[10], bt[10], rt[10];
+    int ct[10], tat[10], wt[10], completed[10] = {0};
+    float avg_wt = 0, avg_tat = 0;
+
     printf("Enter number of processes: ");
     scanf("%d", &n);
+    remain = n;
 
-    int pid[n], burst_time[n], remaining_time[n], waiting_time[n], turnaround_time[n];
-    float total_waiting_time = 0, total_turnaround_time = 0;
+    printf("Enter arrival times:\n");
+    for(i = 0; i < n; i++) {
+        printf("Arrival time of P%d: ", i);
+        scanf("%d", &at[i]);
+    }
 
-    // Input burst times
-    for (int i = 0; i < n; i++)
-    {
-        pid[i] = i + 1;
-        printf("Enter burst time for Process %d: ", pid[i]);
-        scanf("%d", &burst_time[i]);
-        remaining_time[i] = burst_time[i];
-        waiting_time[i] = 0;
+    printf("Enter burst times:\n");
+    for(i = 0; i < n; i++) {
+        printf("Burst time of P%d: ", i);
+        scanf("%d", &bt[i]);
+        rt[i] = bt[i]; // Copy burst time to remaining time
     }
 
     printf("Enter time quantum: ");
-    scanf("%d", &time_quantum);
+    scanf("%d", &tq);
 
-    int time = 0, done;
-
-    do
-    {
-        done = 1;
-        for (int i = 0; i < n; i++)
-        {
-            if (remaining_time[i] > 0)
-            {
+    printf("\nGantt Chart:\n");
+    while(remain != 0) {
+        int done = 1;
+        for(i = 0; i < n; i++) {
+            if(at[i] <= time && rt[i] > 0) {
                 done = 0;
-
-                if (remaining_time[i] > time_quantum)
-                {
-                    time += time_quantum;
-                    remaining_time[i] -= time_quantum;
-                }
-                else
-                {
-                    time += remaining_time[i];
-                    waiting_time[i] = time - burst_time[i];
-                    remaining_time[i] = 0;
+                if(rt[i] > tq) {
+                    printf("P%d -> ", i);
+                    time += tq;
+                    rt[i] -= tq;
+                } else {
+                    printf("P%d -> ", i);
+                    time += rt[i];
+                    rt[i] = 0;
+                    ct[i] = time;
+                    tat[i] = ct[i] - at[i];
+                    wt[i] = tat[i] - bt[i];
+                    completed[i] = 1;
+                    remain--;
                 }
             }
         }
-    } while (!done);
-
-    // Calculate turnaround time
-    for (int i = 0; i < n; i++)
-    {
-        turnaround_time[i] = burst_time[i] + waiting_time[i];
-        total_waiting_time += waiting_time[i];
-        total_turnaround_time += turnaround_time[i];
+        if(done) time++;
     }
 
-    // Display table
-    printf("\nPID\tBurst\tWaiting\tTurnaround\n");
-    for (int i = 0; i < n; i++)
-    {
-        printf("P%d\t%d\t%d\t%d\n", pid[i], burst_time[i], waiting_time[i], turnaround_time[i]);
+    printf("\n\nProcess\tAT\tBT\tCT\tTAT\tWT\n");
+    for(i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n", i, at[i], bt[i], ct[i], tat[i], wt[i]);
+        avg_wt += wt[i];
+        avg_tat += tat[i];
     }
 
-    // Display averages
-    printf("\nAverage Waiting Time = %.2f", total_waiting_time / n);
-    printf("\nAverage Turnaround Time = %.2f\n", total_turnaround_time / n);
+    printf("\nAverage Waiting Time: %.2f", avg_wt / n);
+    printf("\nAverage Turnaround Time: %.2f\n", avg_tat / n);
 
     return 0;
 }
