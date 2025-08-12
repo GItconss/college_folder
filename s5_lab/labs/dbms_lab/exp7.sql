@@ -1,4 +1,4 @@
-1.	CREATE TABLE student (
+	CREATE TABLE student (
     rollno INT,
     fname VARCHAR(50),
     lname VARCHAR(50),
@@ -21,7 +21,7 @@
 	+--------+-------+--------+------+------------+------+
 
 
-2.	CREATE TABLE department (
+	CREATE TABLE department (
 		Did INT,
 		Dname VARCHAR(50)
 	);
@@ -41,8 +41,11 @@
 	|   3 | Electrical Engineering |
 	|   4 | Civil Engineering      |
 	+-----+------------------------+
+	
+	
+	
 -- Create the view
-3	CREATE VIEW student_info AS
+1.	CREATE VIEW student_info AS
 	SELECT 
 		student.fname,
 		YEAR(CURDATE()) - YEAR(student.dob) AS age,
@@ -51,4 +54,5 @@
 		student
 	JOIN 
     department ON student.Did = department.Did;
-
+2.DROP VIEW student_info;
+3.
