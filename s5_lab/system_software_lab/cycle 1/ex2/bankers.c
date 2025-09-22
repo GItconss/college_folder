@@ -6,23 +6,23 @@ int main() {
     int need[10][10], finish[10], safeSeq[10];
     int count = 0;
 
-    printf("Enter the number of processes: ");
+    printf("Enter number of processes: ");
     scanf("%d", &n);
 
-    printf("Enter the number of resources: ");
+    printf("Enter  number of resources: ");
     scanf("%d", &m);
 
-    printf("Enter the Allocation Matrix:\n");
+    printf("Enter  Allocation Matrix:\n");
     for (i = 0; i < n; i++)
         for (j = 0; j < m; j++)
             scanf("%d", &alloc[i][j]);
 
-    printf("Enter the Maximum Matrix:\n");
+    printf("Enter  Maximum Matrix:\n");
     for (i = 0; i < n; i++)
         for (j = 0; j < m; j++)
             scanf("%d", &max[i][j]);
 
-    printf("Enter the Available Resources:\n");
+    printf("Enter  Available Resources:\n");
     for (i = 0; i < m; i++)
         scanf("%d", &avail[i]);
 
