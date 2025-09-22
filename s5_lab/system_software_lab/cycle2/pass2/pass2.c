@@ -7,8 +7,9 @@ int main() {
     FILE *optab_file = fopen("optab.txt", "r");
     FILE *symtab_file = fopen("symtab.txt", "r");
     FILE *output_file = fopen("output.txt", "w");
+    FILE *listing_file = fopen("listing.txt", "w");
 
-    if (!intermediate || !optab_file || !symtab_file || !output_file) {
+    if (!intermediate || !optab_file || !symtab_file || !output_file || !listing_file) {
         printf("Error: unable to open one or more files.\n");
         return 1;
     }
@@ -22,12 +23,11 @@ int main() {
     fscanf(intermediate, "%X %s %s %s", &locctr, label, opcode, operand);
     if (strcmp(opcode, "START") == 0) {
         start_address = (int)strtol(operand, NULL, 16);
-        fprintf(output_file, "H^%s^%06X^", label, start_address);
-        fgets(operand, sizeof(operand), intermediate); // move to next line
+        fprintf(output_file, "H^%-6s^%06X^", label, start_address);
     }
 
-    // Compute program length (last line in intermediate has END)
-    fseek(intermediate, -50, SEEK_END);
+    // Compute program length
+    rewind(intermediate);
     while (fscanf(intermediate, "%X %s %s %s", &locctr, label, opcode, operand) == 4) {
         if (strcmp(opcode, "END") == 0) {
             program_length = locctr - start_address;
@@ -51,6 +51,8 @@ int main() {
     // Process intermediate file
     while (fscanf(intermediate, "%X %s %s %s", &locctr, label, opcode, operand) == 4 &&
            strcmp(opcode, "END") != 0) {
+
+        object_code[0] = '\0';  // clear
 
         rewind(optab_file);
         int opcode_found = 0;
@@ -84,19 +86,26 @@ int main() {
                     strncpy(chars, operand + 2, strlen(operand) - 3);
                     chars[strlen(operand) - 3] = '\0';
                     for (i = 0; i < strlen(chars); i++) {
-                        sprintf(object_code, "%02X", chars[i]);
-                        fprintf(output_file, "^%s", object_code);
+                        char temp[10];
+                        sprintf(temp, "%02X", (unsigned char)chars[i]);
+                        strcat(object_code, temp);
                         text_length++;
                     }
+                    fprintf(output_file, "^%s", object_code);
                 } else if (operand[0] == 'X') {
                     char hexval[20];
                     strncpy(hexval, operand + 2, strlen(operand) - 3);
                     hexval[strlen(operand) - 3] = '\0';
-                    fprintf(output_file, "^%s", hexval);
+                    sprintf(object_code, "%s", hexval);
+                    fprintf(output_file, "^%s", object_code);
                     text_length += strlen(hexval) / 2;
                 }
             }
         }
+
+        // Write to listing file: address, label, opcode, operand, object code
+        fprintf(listing_file, "%04X\t%-6s\t%-6s\t%-6s\t%s\n",
+                locctr, label, opcode, operand, object_code);
     }
 
     // Update text record length
@@ -111,8 +120,9 @@ int main() {
     fclose(optab_file);
     fclose(symtab_file);
     fclose(output_file);
+    fclose(listing_file);
 
-    printf("PASS 2 complete. Object program written to output.txt\n");
+    printf("PASS 2 complete.\nObject program written to output.txt\nListing file written to listing.txt\n");
 
     return 0;
 }
