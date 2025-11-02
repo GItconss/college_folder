@@ -56,7 +56,14 @@ int main()
 	return 0;
 	
 }
-/*HEADER RECORD
+/*
+I/P
+----
+H   COPY 001000 000012
+T 001000 0F 001009 18100C 0C100F 000005 000003
+E 001000
+
+HEADER RECORD
 Program name:COPY
 Program name:1000
 Program name:12
